@@ -12,8 +12,10 @@ class AdminBase:
             )
             self.cursor = self.connection.cursor()
             print("✅ Database Connection Successful")
+            return True
         except sql.Error as e:
             print("❌ Failed to connect to database:", e)
+            return False
 
     def view_theatres(self):
         try:

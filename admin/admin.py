@@ -1,13 +1,14 @@
-from admin_base import AdminBase
-from mange_booking import ManageBooking
-from manage_screen import ManageScreen
-from manage_show import ManageShow
-from manage_movie import ManageMovie
+from .admin_base import AdminBase
+from .mange_booking import ManageBooking
+from .manage_screen import ManageScreen
+from .manage_show import ManageShow
+from .manage_movie import ManageMovie
 
 class Admin(AdminBase):
     def __init__(self):
-        super().__init__()
-        self.admin_menu()
+        if super().__init__():
+            self.admin_menu()
+        else: return
 
     def admin_menu(self):        
         while True:

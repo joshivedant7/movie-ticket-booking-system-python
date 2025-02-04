@@ -1,4 +1,4 @@
-from admin_base import AdminBase
+from .admin_base import AdminBase
 import mysql.connector as sql
 
 class ManageShow(AdminBase):
