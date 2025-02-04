@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.console import Console
 from .db_setup import get_cursor
 from termcolor import colored
-from user import User
+from user import User 
 
 x = False
 
@@ -681,31 +681,9 @@ def cancelTickets():
         updateSeatAvailability(real_g_seats, real_s_seats, "-1", sc_id)
     except Exception as e:
         print(f"Error while modifying seats: {e}")
-        
-        
-    
-    
-    
-    
-    
     
     list4 = get_ticket_cost(show_id)
     updateseats(list4[2]+gold , list4[3]+silver , show_id)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    # Delete the booking record
     try:
         connection, cursor = get_cursor()
         if cursor:
@@ -741,108 +719,110 @@ def view_booking():
                 print("No bookings found for this user.")
     except Exception as e:
         print(f"Error: {e}")
-    
-while True:
-    print()
-    print("1. book tickets")
-    print("2. cancellation of tickets")
-    print("3. view all your bookings")
-    print("0. exit ")
-    print()
-    n = input("enter a choice[0-2] : ")
 
-    if n == "0":
-        break
-
-    elif n == "1":
+def staring_point(user):   
+    u = user 
+    while True:
         print()
-        getMovies()
-
+        print("1. book tickets")
+        print("2. cancellation of tickets")
+        print("3. view all your bookings")
+        print("0. exit ")
         print()
-        movie_id = input("enter a movie id : ")
-        print()
-        getTheatres()
-        theatre_id = input("enter a theatre id : ")
+        n = input("enter a choice[0-2] : ")
 
-        print()
-        x1 = getScreenId(movie_id, theatre_id)
-        if x1:
-            continue
+        if n == "0":
+            break
 
-        print()
-        show_id = input("enter a show id : ")
-
-        query = """
-            SELECT Screen_ID, Class_Cost_Gold, Class_Cost_Silver
-            FROM show_table
-            WHERE Show_ID = %s
-            """
-        connection, cursor = get_cursor()
-        cursor.execute(query, (show_id,))
-        rows = cursor.fetchall()
-        screen_id = "1"
-        class_cost_gold = "1"
-        class_cost_silver = "1"
-        if len(rows) == 0:
-            print("data not found")
+        elif n == "1":
             print()
-            continue
-        if rows:
-            # screen_id, class_cost_gold, class_cost_silver = row
-            # print(f"Screen ID: {screen_id}")
-            # print(f"Class Cst (Gold): {class_cost_gold}")
-            # print(f"Class Cost (Silver): {class_cost_silver}")
-            list4 = rows
-            screen_id = list4[0][0]
-            class_cost_gold = list4[0][1]
-            class_cost_silver = list4[0][1]
+            getMovies()
+
+            print()
+            movie_id = input("enter a movie id : ")
+            print()
+            getTheatres()
+            theatre_id = input("enter a theatre id : ")
+
+            print()
+            x1 = getScreenId(movie_id, theatre_id)
+            if x1:
+                continue
+
+            print()
+            show_id = input("enter a show id : ")
+
+            query = """
+                SELECT Screen_ID, Class_Cost_Gold, Class_Cost_Silver
+                FROM show_table
+                WHERE Show_ID = %s
+                """
+            connection, cursor = get_cursor()
+            cursor.execute(query, (show_id,))
+            rows = cursor.fetchall()
+            screen_id = "1"
+            class_cost_gold = "1"
+            class_cost_silver = "1"
+            if len(rows) == 0:
+                print("data not found")
+                print()
+                continue
+            if rows:
+                # screen_id, class_cost_gold, class_cost_silver = row
+                # print(f"Screen ID: {screen_id}")
+                # print(f"Class Cst (Gold): {class_cost_gold}")
+                # print(f"Class Cost (Silver): {class_cost_silver}")
+                list4 = rows
+                screen_id = list4[0][0]
+                class_cost_gold = list4[0][1]
+                class_cost_silver = list4[0][1]
+            else:
+                print("No data found for the given Show_ID.")
+            cursor.close()
+            connection.close()
+            print()
+            print(screen_id, class_cost_gold, class_cost_silver)
+
+        # Get the seat availability strings
+            strSilver = getSilverSeats(screen_id, theatre_id)
+
+            strGold = getGoldSeats(screen_id, theatre_id)
+
+            if x == True:
+                x = False
+                continue
+
+            # Remove spaces from the strings
+            strSilver = strSilver.replace(" ", "")
+            strGold = strGold.replace(" ", "")
+
+            # Convert the strings to lists for mutability
+            strSilver_list = list(strSilver)
+            strGold_list = list(strGold)
+
+            display_theatre(strGold, strSilver, screen_id)
+            if x == True:
+                x = False
+                continue
+
+            list1 = bookSeat(strSilver_list, strGold_list, show_id)
+            if x == True:
+                x = False
+                continue
+            if (list1 == True):
+                continue
+            if list1[6] == True:
+                insert_booking_record(list1[5], list1[0], u.fname,u.lname, u.web_uid,
+                                    show_id, list1[3], list1[4], list1[1], list1[2], screen_id, list1[6],list1[7] , list1[8])
+            # total_seats , total_cost ,fname, lname ,uid , show_id ,silver_seats,gold_seats
+            
+        elif n == "2":
+            x1 = cancelTickets()
+            if x1:
+                continue
+        elif n == "3":
+            x1 = view_booking()
+            if x1:
+                continue
         else:
-            print("No data found for the given Show_ID.")
-        cursor.close()
-        connection.close()
-        print()
-        print(screen_id, class_cost_gold, class_cost_silver)
-
-       # Get the seat availability strings
-        strSilver = getSilverSeats(screen_id, theatre_id)
-
-        strGold = getGoldSeats(screen_id, theatre_id)
-
-        if x == True:
-            x = False
-            continue
-
-        # Remove spaces from the strings
-        strSilver = strSilver.replace(" ", "")
-        strGold = strGold.replace(" ", "")
-
-        # Convert the strings to lists for mutability
-        strSilver_list = list(strSilver)
-        strGold_list = list(strGold)
-
-        display_theatre(strGold, strSilver, screen_id)
-        if x == True:
-            x = False
-            continue
-
-        list1 = bookSeat(strSilver_list, strGold_list, show_id)
-        if x == True:
-            x = False
-            continue
-        if (list1 == True):
-            continue
-        if list1[6] == True:
-            insert_booking_record(list1[5], list1[0], u.fname,u.lname, u.web_uid,
-                                  show_id, list1[3], list1[4], list1[1], list1[2], screen_id, list1[6],list1[7] , list1[8])
-        # total_seats , total_cost ,fname, lname ,uid , show_id ,silver_seats,gold_seats
-
-    elif n == "2":
-        x1 = cancelTickets()
-        if x1:
-            continue
-    elif n == "3":
-        x1 = view_booking()
-        if x1:
-            continue
-    else:
-        print("enter a valid choice")
+            print("enter a valid choice")

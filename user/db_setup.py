@@ -7,7 +7,7 @@ def create_connection():
             host="localhost",        
             user="root",             
             password="",             
-            database="moviedb"
+            database="dbfm1"
         )
         
         if conn.is_connected():

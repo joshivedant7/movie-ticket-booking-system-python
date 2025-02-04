@@ -154,11 +154,11 @@ class ManageMovie(AdminBase):
 
             print("\n🎬 Movies List:")
             print("-" * 80)
-            print(f"{'Movie ID':<12}{'Name':<20}{'Language':<15}{'Genre':<15}{'Target Audience':<20}")
+            print(f"{'Movie ID':<12}{'Name':<29}{'Language':<15}{'Genre':<17}{'Target Audience':<20}")
             print("-" * 80)
 
             for movie in movies:
-                print(f"{movie[0]:<12}{movie[1]:<20}{movie[2]:<15}{movie[3]:<15}{movie[4]:<20}")
+                print(f"{movie[0]:<12}{movie[1]:<29}{movie[2]:<15}{movie[3]:<17}{movie[4]:<20}")
             
             print("-" * 80)
 

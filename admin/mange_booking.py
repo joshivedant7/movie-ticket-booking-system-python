@@ -54,9 +54,10 @@ class ManageBooking(AdminBase):
             print("-" * 80)
             print(f"{'Booking ID':<12}{'User':<20}{'Show Date':<12}{'Show Time':<10}{'Tickets':<8}{'Total Cost':<10}")
             print("-" * 80)
-            
+            i=0
             for booking in bookings:
-                print(f"{booking[0]:<12}{booking[1]} {booking[2]:<18}{booking[3]:<12}{str(booking[4]):<10}{str(booking[5]):<8}{str(booking[6]):<10}")
+                print(f"{i}{booking[0]:<12}{booking[1]} {booking[2]:<18}{booking[3]:<12}{str(booking[4]):<10}{str(booking[5]):<8}{str(booking[6]):<10}")
+                i+=1
             
             print("-" * 80)
         

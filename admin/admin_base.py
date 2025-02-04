@@ -8,7 +8,7 @@ class AdminBase:
                 host='localhost',
                 user='root',
                 password='',
-                database='moviedb'
+                database='dbfm1'
             )
             self.cursor = self.connection.cursor()
             print("✅ Database Connection Successful")

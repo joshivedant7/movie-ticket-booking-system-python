@@ -56,7 +56,7 @@ class Admin(AdminBase):
             elif choice == "3":
                 ManageShow(theatre_id)
             elif choice == "4":
-                ManageMovie(theatre_id)
+                ManageMovie()
             elif choice == "5":
                 print("\n🔙 Returning to Main Menu...")
                 break
