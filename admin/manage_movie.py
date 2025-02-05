@@ -9,13 +9,13 @@ class ManageMovie(AdminBase):
 
     def movie_menu(self):
         while True:
-            print("\n🎬 Movie Management Menu:")
-            print("1. Add Movie")
-            print("2. Remove Movie")
-            print("3. Update Movie")
-            print("4. View Movies")
-            print("5. Exit")
-            choice = input("\nEnter choice: ")
+            print("\n\t\t----🎬  Show Management - Theatre ID: ----")
+            print("\t\t\t1. Add Movie")
+            print("\t\t\t2. Remove Movie")
+            print("\t\t\t3. Update Movie")
+            print("\t\t\t4. View Movies")
+            print("\t\t\t5. Exit")
+            choice = input("👉 Enter your choice: ")
 
             if choice == '1':
                 self.add_movie()

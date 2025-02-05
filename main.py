@@ -31,7 +31,8 @@ while True:
     print("\t\t\t2. for User")
     print("\t\t\t3. for Exit")
     print()
-    n = input("\t\t\tEnter a choicecls [1-3] : ")
+    n  = input("👉 Enter your choice[1-3]: ")
+
 
     if n == "1":
         Admin()
@@ -39,11 +40,12 @@ while True:
     elif n == "2":
         u = User()
         while True:
-            print("\n1. Login")
-            print("2. Sign Up")
-            print("3. Exit")
+            print("\t\t\t1. Login")
+            print("\t\t\t2. Sign Up")
+            print("\t\t\t3. Exit")
 
-            choice = input("Enter a choice [1-3]: ")
+            choice  = input("👉 Enter your choice[1-3]: ")
+
 
             if choice == "1":
                 if u.login():

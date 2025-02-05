@@ -8,13 +8,13 @@ class User:
         self.fname = ""
         self.lname = ""
 
-    def is_valid_email(email):
+    def is_valid_email(self,email):
         return re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email)
 
-    def is_valid_phone(phone):
+    def is_valid_phone(self,phone):
         return re.match(r"^\d{10}$", phone)
 
-    def is_valid_name(name):
+    def is_valid_name(self,name):
         return re.match(r"^[A-Za-z]+(?: [A-Za-z]+)*$", name)
 
     def get_unique_web_user_id(self):
