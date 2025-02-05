@@ -1,6 +1,8 @@
 from admin.admin import Admin
 from user.user import User
 import os
+import sys
+import time
 
 ascii = """ 
     \u001B[34m███╗   ███╗ ██████╗ ██╗   ██╗██╗███████╗    ████████╗██╗ ██████╗██╗  ██╗███████╗████████╗
@@ -17,16 +19,19 @@ ascii = """
                     ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝           \u001B[0m       
 """
 print("---------------------------------------------------------------------------------------------------------")
-print(ascii)
+for char in ascii:
+    sys.stdout.write(char)
+    sys.stdout.flush()
+    time.sleep(0.002)
 print("---------------------------------------------------------------------------------------------------------")
 
 while True:
     print()
-    print("1. for Admin")
-    print("2. for User")
-    print("3. for Exit")
+    print("\t\t\t1. for Admin")
+    print("\t\t\t2. for User")
+    print("\t\t\t3. for Exit")
     print()
-    n = input("Enter a choicecls [1-3] : ")
+    n = input("\t\t\tEnter a choicecls [1-3] : ")
 
     if n == "1":
         Admin()

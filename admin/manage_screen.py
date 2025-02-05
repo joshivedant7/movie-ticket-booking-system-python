@@ -121,10 +121,10 @@ class ManageScreen(AdminBase):
             if result:
                 row_gold = int(result[0])
                 col_gold = int(result[1])
-                availability_gold = result[2].split()
+                availability_gold = list(result[2])
                 row_silver = int(result[3])
                 col_silver = int(result[4])
-                availability_silver = result[5].split()
+                availability_silver = list(result[5])
 
                 gold_matrix = np.array(availability_gold).reshape(row_gold, col_gold)
                 silver_matrix = np.array(availability_silver).reshape(row_silver, col_silver)

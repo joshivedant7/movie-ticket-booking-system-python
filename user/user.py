@@ -1,11 +1,21 @@
 import subprocess
 from .db_setup import get_cursor
+import re
 
 class User:
     def __init__(self):
         self.web_uid = -1
         self.fname = ""
         self.lname = ""
+
+    def is_valid_email(email):
+        return re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email)
+
+    def is_valid_phone(phone):
+        return re.match(r"^\d{10}$", phone)
+
+    def is_valid_name(name):
+        return re.match(r"^[A-Za-z]+(?: [A-Za-z]+)*$", name)
 
     def get_unique_web_user_id(self):
         """Fetch a unique Web_User_ID by incrementing the max ID in the table."""
@@ -56,17 +66,39 @@ class User:
         return False  # Ensure False is returned when login fails
 
     def signup(self, wid):
-        web_uid = wid
+        web_uid = wid  # Assuming 'wid' is defined somewhere
+    
         first_name = input("Enter your first name: ")
+        while not self.is_valid_name(first_name):
+            print("❌ Invalid first name. Use only alphabets and spaces.")
+            first_name = input("Enter your first name: ")
+        
         last_name = input("Enter your last name: ")
+        while not self.is_valid_name(last_name):
+            print("❌ Invalid last name. Use only alphabets and spaces.")
+            last_name = input("Enter your last name: ")
+        
         email_id = input("Enter your email ID: ")
-        age = int(input("Enter your age: "))
+        while not self.is_valid_email(email_id):
+            print("❌ Invalid email format. Try again.")
+            email_id = input("Enter your email ID: ")
+        
+        try:
+            age = int(input("Enter your age: "))
+        except ValueError:
+            print("❌ Invalid age. Enter a valid number.")
+            return
+        
         phone_no = input("Enter your phone number: ")
+        while not self.is_valid_phone(phone_no):
+            print("❌ Phone number must be exactly 10 digits.")
+            phone_no = input("Enter your phone number: ")
+        
         password = input("Create a password: ")
-
+        
         check_query = "SELECT COUNT(*) FROM web_user WHERE Web_User_ID = %s"
         insert_query = "INSERT INTO web_user (Web_User_ID, First_Name, Last_Name, Email_ID, Age, Phone_Number, password) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-
+        
         connection, cursor = get_cursor()
         if cursor:
             try:
@@ -102,7 +134,7 @@ if __name__ == "__main__":
 
         if choice == "1":
             if u.login():
-                with open('userr.py') as file:
+                with open('userr.py',encoding='uft-8') as file:
                     exec(file.read())
 
         elif choice == "2":

@@ -1,7 +1,6 @@
 import mysql.connector
 
 def create_connection():
-    """Establish and return a connection to the database."""
     try:
         conn = mysql.connector.connect(
             host="localhost",        
