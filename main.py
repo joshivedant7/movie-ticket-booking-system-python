@@ -20,9 +20,8 @@ ascii = """
 """
 print("---------------------------------------------------------------------------------------------------------")
 for char in ascii:
-    sys.stdout.write(char)
-    sys.stdout.flush()
-    time.sleep(0.002)
+    print(char,end='')
+    time.sleep(0.0005)
 print("---------------------------------------------------------------------------------------------------------")
 
 while True:
@@ -49,7 +48,7 @@ while True:
 
             if choice == "1":
                 if u.login():
-                    path = r'C:\Users\HP\OneDrive\Documents\GithubUploads\movie-ticket-booking-system-python\user\userr.py'
+                    path = r'user\userr.py'
                     with open(path) as file:
                         exec(file.read())  
 
