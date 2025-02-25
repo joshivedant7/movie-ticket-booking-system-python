@@ -35,13 +35,13 @@ class ManageBooking(AdminBase):
             query = """
                 SELECT B.Booking_ID, U.First_Name, U.Last_Name, S.Show_Date, S.Show_Time, 
                        B.No_of_Tickets, B.Total_Cost 
-                FROM Booking B
-                JOIN Web_user U ON B.User_ID = U.Web_User_ID
-                JOIN Show_table S ON B.Show_ID = S.Show_ID
-                JOIN Screen SC ON S.Screen_ID = SC.Screen_ID
-                JOIN Theatre T ON SC.Theatre_ID = T.Theatre_ID
+                FROM booking B
+                JOIN web_user U ON B.User_ID = U.Web_User_ID
+                JOIN show_table S ON B.Show_ID = S.Show_ID
+                JOIN screen SC ON S.Screen_ID = SC.Screen_ID
+                JOIN theatre T ON SC.Theatre_ID = T.Theatre_ID
                 WHERE T.Theatre_ID = %s
-                ORDER BY S.Show_Date, S.Show_Time
+                ORDER BY S.Show_Date, S.Show_Time ;
             """
             self.cursor.execute(query, (self.theatre_id,))
             bookings = self.cursor.fetchall()
@@ -52,11 +52,11 @@ class ManageBooking(AdminBase):
 
             print("\n📜 Bookings List:")
             print("-" * 80)
-            print(f"{'Booking ID':<12}{'User':<20}{'Show Date':<12}{'Show Time':<10}{'Tickets':<8}{'Total Cost':<10}")
+            print(f"No. {'Booking ID':<12}{'User':<20}{'Show Date':<12}{'Show Time':<10}{'Tickets':<8}{'Total Cost':<10}")
             print("-" * 80)
             i=0
             for booking in bookings:
-                print(f"{i}{booking[0]:<12}{booking[1]} {booking[2]:<18}{booking[3]:<12}{str(booking[4]):<10}{str(booking[5]):<8}{str(booking[6]):<10}")
+                print(f"{i}   {booking[0]:<12}{booking[1]} {booking[2]:<18}{booking[3]:<12}{str(booking[4]):<10}{str(booking[5]):<8}{str(booking[6]):<10}")
                 i+=1
             
             print("-" * 80)
@@ -74,7 +74,7 @@ class ManageBooking(AdminBase):
             new_card_number = input("Enter New Card Number (Leave blank to keep current): ")
             new_name_on_card = input("Enter New Name on Card (Leave blank to keep current): ")
 
-            update_query = "UPDATE Booking SET "
+            update_query = "UPDATE booking SET "
             update_values = []
             
             if new_no_of_tickets:
@@ -95,7 +95,7 @@ class ManageBooking(AdminBase):
             
             update_query = update_query.rstrip(", ")
 
-            update_query += " WHERE Booking_ID = %s"
+            update_query += " WHERE Booking_ID = %s ;"
 
             booking_id = input('👉 Enter booking ID:')
             update_values.append(booking_id)
@@ -106,4 +106,4 @@ class ManageBooking(AdminBase):
             print("\n✅ Booking updated successfully.")
 
         except sql.Error as e:
-            print("❌ Error updating booking:", e)
+            print("❌\u001B[31m Error updating booking \u001B[0m")

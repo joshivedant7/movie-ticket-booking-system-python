@@ -6,8 +6,8 @@ class AdminBase:
         try:
             self.connection = sql.connect(
                 host='localhost',
-                user='root',
-                password='',
+                user='admin',
+                password='admin',
                 database='dbfm1'
             )
             self.cursor = self.connection.cursor()
@@ -19,7 +19,7 @@ class AdminBase:
 
     def view_theatres(self):
         try:
-            query = "SELECT * FROM Theatre"
+            query = "SELECT * FROM theatre;"
             self.cursor.execute(query)
             theatres = self.cursor.fetchall()
             
@@ -30,10 +30,16 @@ class AdminBase:
             print("❌ Error fetching theatres:", e)
 
     def select_theatre(self):
-        theatre_id = input("\n🔹 Enter Theatre ID to manage: ")
-        return theatre_id
+        theatre_id = input("\n🔹 Enter Theatre ID to manage: ").upper()
+        query = "SELECT Theatre_ID FROM theatre;"
+        self.cursor.execute(query)
+        theatres = self.cursor.fetchall()
+        theatre_ids = [row[0] for row in theatres]
+        if theatre_id in theatre_ids :
+            return theatre_id
+        else : raise Exception(f'No theater-id with {theatre_id}')
 
     def close_connection(self):
         self.cursor.close()
         self.connection.close()
-    print("🔴 Database Connection Closed.")
+    # print("🔴 Database Connection Closed.")

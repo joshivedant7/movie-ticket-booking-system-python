@@ -11,7 +11,7 @@ class ManageShow(AdminBase):
     def get_screen_ids(self):
         """Fetch available screen IDs for the selected theatre."""
         try:
-            query = "SELECT Screen_ID FROM Screen WHERE Theatre_ID = %s"
+            query = "SELECT Screen_ID FROM screen WHERE Theatre_ID = %s ;"
             self.cursor.execute(query, (self.theatre_id,))
             screen_ids = [screen[0] for screen in self.cursor.fetchall()]
             if not screen_ids:
@@ -58,7 +58,7 @@ class ManageShow(AdminBase):
                     Class_Cost_Gold, Class_Cost_Silver, Movie_ID
                 FROM show_table
                 WHERE Screen_ID IN ({placeholders})
-                ORDER BY Show_Date, Show_Time
+                ORDER BY Show_Date, Show_Time ;
             """
 
             self.cursor.execute(query, tuple(self.screen_ids))
@@ -108,7 +108,7 @@ class ManageShow(AdminBase):
             query = """
                 INSERT INTO show_table (Show_ID, Show_Time, Show_Date, Seats_Remaining_Gold, Seats_Remaining_Silver,
                                         Class_Cost_Gold, Class_Cost_Silver, Screen_ID, Movie_ID)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) ;
             """
             self.cursor.execute(query, (show_id, show_time, show_date, seats_gold, seats_silver,
                                         cost_gold, cost_silver, screen_id, movie_id))
@@ -179,7 +179,7 @@ class ManageShow(AdminBase):
                 update_values.append(new_movie_id)
 
             update_query = update_query.rstrip(", ")
-            update_query += " WHERE Show_ID = %s"
+            update_query += " WHERE Show_ID = %s ;"
             update_values.append(show_id)
 
             self.cursor.execute(update_query, tuple(update_values))
@@ -192,7 +192,7 @@ class ManageShow(AdminBase):
     def remove_show(self):
         try:
             show_id = input("\nEnter Show ID to remove: ")
-            query = "DELETE FROM Show WHERE Show_ID = %s"
+            query = "DELETE FROM show WHERE Show_ID = %s ;"
             self.cursor.execute(query, (show_id,))
             self.connection.commit()
             print("\n✅ Show removed successfully.")

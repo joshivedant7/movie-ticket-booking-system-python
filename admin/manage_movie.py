@@ -59,7 +59,7 @@ class ManageMovie(AdminBase):
 
             query = """
                 INSERT INTO movie (Movie_ID, Name, Language, Genre, Target_Audience)
-                VALUES (%s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s);
             """
             self.cursor.execute(query, (movie_id, name, language, genre, target_audience))
             self.connection.commit()
@@ -72,7 +72,7 @@ class ManageMovie(AdminBase):
         try:
             movie_id = input("\nEnter Movie ID to remove: ")
 
-            query = "DELETE FROM movie WHERE Movie_ID = %s"
+            query = "DELETE FROM movie WHERE Movie_ID = %s;"
             self.cursor.execute(query, (movie_id,))
             self.connection.commit()
 
@@ -128,7 +128,7 @@ class ManageMovie(AdminBase):
                 update_values.append(new_target_audience)
 
             update_query = update_query.rstrip(", ")
-            update_query += " WHERE Movie_ID = %s"
+            update_query += " WHERE Movie_ID = %s;"
             update_values.append(movie_id)
 
             self.cursor.execute(update_query, tuple(update_values))
@@ -143,7 +143,7 @@ class ManageMovie(AdminBase):
         try:
             query = """
                 SELECT Movie_ID, Name, Language, Genre, Target_Audience
-                FROM movie
+                FROM movie;
             """
             self.cursor.execute(query)
             movies = self.cursor.fetchall()

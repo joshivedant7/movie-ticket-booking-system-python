@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
         if choice == "1":
             if u.login():
-                with open('userr.py',encoding='uft-8') as file:
+                with open('user/userr.py','r',encoding='uft-8') as file:
                     exec(file.read())
 
         elif choice == "2":

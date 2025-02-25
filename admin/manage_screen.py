@@ -62,7 +62,7 @@ class ManageScreen(AdminBase):
     def remove_screen(self):
         try:
             screen_id = input("Enter Screen ID to remove: ")
-            query = "DELETE FROM Screen WHERE Screen_ID = %s AND Theatre_ID = %s"
+            query = "DELETE FROM screen WHERE Screen_ID = %s AND Theatre_ID = %s ;"
             self.cursor.execute(query, (screen_id, self.theatre_id))
             self.connection.commit()
             print("\n✅ Screen removed successfully.")
@@ -76,14 +76,15 @@ class ManageScreen(AdminBase):
             no_col_gold = int(input("Enter new Number of Columns for Gold Class: "))
             no_row_silver = int(input("Enter new Number of Rows for Silver Class: "))
             no_col_silver = int(input("Enter new Number of Columns for Silver Class: "))
-
+            Availability_Gold = '1'*(no_col_gold*no_row_gold)
+            Availability_Silver  = '1'*(no_col_silver*no_row_silver)        
             query = """
-                UPDATE Screen
+                UPDATE screen
                 SET No_Row_Gold = %s, No_Col_Gold = %s, 
-                    No_Row_Silver = %s, No_Col_Silver = %s
-                WHERE Screen_ID = %s AND Theatre_ID = %s
+                    No_Row_Silver = %s, No_Col_Silver = %s , Availability_Gold = %s , Availability_Silver = %s
+                WHERE Screen_ID = %s AND Screen_ID = %s ;
             """
-            values = (no_row_gold, no_col_gold, no_row_silver, no_col_silver, screen_id, self.theatre_id)
+            values = (no_row_gold, no_col_gold, no_row_silver, no_col_silver, screen_id,Availability_Gold,Availability_Silver, self.theatre_id)
             self.cursor.execute(query, values)
             self.connection.commit()
             print("\n✅ Screen updated successfully.")
@@ -92,7 +93,7 @@ class ManageScreen(AdminBase):
 
     def view_all_screens(self):
         try:
-            query = "SELECT * FROM Screen WHERE Theatre_ID = %s"
+            query = "SELECT * FROM screen WHERE Theatre_ID = %s ;"
             self.cursor.execute(query, (self.theatre_id,))
             screens = self.cursor.fetchall()
 
@@ -114,7 +115,7 @@ class ManageScreen(AdminBase):
             screen_id = input("Enter Screen ID to view availability: ")
             
             query = "SELECT No_Row_Gold, No_Col_Gold, Availability_Gold, No_Row_Silver, No_Col_Silver, Availability_Silver " \
-                    "FROM Screen WHERE Screen_ID = %s AND Theatre_ID = %s"
+                    "FROM screen WHERE Screen_ID = %s AND Theatre_ID = %s ;"
             self.cursor.execute(query, (screen_id, self.theatre_id))
             result = self.cursor.fetchone()
 

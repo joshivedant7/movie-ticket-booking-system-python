@@ -25,9 +25,12 @@ class Admin(AdminBase):
                 self.view_theatres()
 
             elif choice == "2":
-                theatre_id = self.select_theatre()
-                if theatre_id:
-                    self.theatre_operations(theatre_id)
+                try:
+                    theatre_id = self.select_theatre()
+                    if theatre_id:
+                        self.theatre_operations(theatre_id)
+                except Exception as e:
+                    print('Error Message : ',e)
 
             elif choice == "3":
                 self.add_theatre()
@@ -42,7 +45,7 @@ class Admin(AdminBase):
 
     def get_next_theatre_id(self,cursor):
         """Fetch the next theatre ID in the format 'T01', 'T02'..."""
-        cursor.execute("SELECT MAX(Theatre_ID) FROM theatre")
+        cursor.execute("SELECT MAX(Theatre_ID) FROM theatre;")
         last_id = cursor.fetchone()[0]
         if last_id:
             next_id = f"T{int(last_id[1:]) + 1:02d}"
@@ -53,8 +56,8 @@ class Admin(AdminBase):
     def add_theatre(self):
         connection = mysql.connector.connect(
         host="localhost",
-        user="root",
-        password="",
+        user="admin",
+        password="admin",
         database="dbfm1"
         )
         cursor = connection.cursor()
@@ -63,7 +66,7 @@ class Admin(AdminBase):
             theatre_name = input("Enter Theatre Name: ")
             num_screens = int(input("Enter Number of Screens: "))
 
-            cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens) VALUES (%s, %s, %s)",
+            cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens) VALUES (%s, %s, %s);",
                         (theatre_id, theatre_name, num_screens))
 
             for i in range(1, num_screens + 1):
@@ -79,7 +82,7 @@ class Admin(AdminBase):
                 cursor.execute("""INSERT INTO screen 
                     (Screen_ID, Theatre_ID, No_Row_Gold, No_Col_Gold, Availability_Gold, 
                     No_Row_Silver, No_Col_Silver, Availability_Silver) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",
                             (screen_id, theatre_id, no_row_gold, no_col_gold, availability_gold,
                                 no_row_silver, no_col_silver, availability_silver))
 
@@ -93,16 +96,17 @@ class Admin(AdminBase):
         finally:
             cursor.close()
             connection.close()
+    
     def theatre_operations(self, theatre_id):
         """Operations that admin can perform for a selected theatre."""
         print(f"\n🎭 Managing Theatre: {theatre_id}")
 
         while True:
             print("\t\t----Theatre Management Options----")
-            print("\t\t\t1.View Bookings")
-            print("\t\t\t2.View Screens")
-            print("\t\t\t3.View Shows")
-            print("\t\t\t4.View Movies")
+            print("\t\t\t1.Manage Bookings")
+            print("\t\t\t2.Manage Screens")
+            print("\t\t\t3.Manage Shows")
+            print("\t\t\t4.Manage Movies")
             print("\t\t\t5.Go Back to Main Menu")
 
             choice = input("👉 Enter your choice: ")
