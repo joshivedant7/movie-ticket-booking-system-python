@@ -70,19 +70,12 @@ class Admin(AdminBase):
         return next_id
 
     def add_theatre(self):
-        connection = mysql.connector.connect(
-        host="localhost",
-        user="admin",
-        password="admin",
-        database="dbfm1"
-        )
-        cursor = connection.cursor()
         try:
-            theatre_id = self.get_next_theatre_id(cursor)
+            theatre_id = self.get_next_theatre_id(self.cursor)
             theatre_name = input("Enter Theatre Name: ")
             num_screens = int(input("Enter Number of Screens: "))
             address = input("Enter address: ")
-            cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens,Area) VALUES (%s, %s, %s,%s);",
+            self.cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens,Area) VALUES (%s, %s, %s,%s);",
                         (theatre_id, theatre_name, num_screens,address))
 
             for i in range(1, num_screens + 1):
@@ -95,40 +88,27 @@ class Admin(AdminBase):
                 availability_gold = "1" * (no_row_gold * no_col_gold)
                 availability_silver = "1" * (no_row_silver * no_col_silver)
 
-                cursor.execute("""INSERT INTO screen 
+                self.cursor.execute("""INSERT INTO screen 
                     (Screen_ID, Theatre_ID, No_Row_Gold, No_Col_Gold, Availability_Gold, 
                     No_Row_Silver, No_Col_Silver, Availability_Silver) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",
                             (screen_id, theatre_id, no_row_gold, no_col_gold, availability_gold,
                                 no_row_silver, no_col_silver, availability_silver))
 
-            connection.commit()
+            self.connection.commit()
             print(f"✅ Theatre '{theatre_name}' added successfully with {num_screens} screens.")
-
         except Exception as e:
-            connection.rollback()
+            self.connection.rollback()
             print(f"❌ Error: {e}")
-
-        finally:
-            cursor.close()
-            connection.close()
     
     def Remove_theatre(self):
         try:
-            connection = mysql.connector.connect(
-                host="localhost",
-                user="admin",
-                password="admin",
-                database="dbfm1"
-            )
-            cursor = connection.cursor()
-
             theatre_id = input('Enter Theatre_ID: ').upper()
 
-            cursor.execute(f"UPDATE theatre SET No_of_Screens = 0 WHERE Theatre_ID = '{theatre_id}'")
+            self.cursor.execute(f"UPDATE theatre SET No_of_Screens = 0 WHERE Theatre_ID = '{theatre_id}'")
             
-            if cursor.rowcount > 0:
-                connection.commit()
+            if self.cursor.rowcount > 0:
+                self.connection.commit()
                 print('✅ Theatre removed.')
             else:
                 print("⚠️ No changes made. Theatre ID not found or already has 0 screens.")
