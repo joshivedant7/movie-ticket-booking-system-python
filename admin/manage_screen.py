@@ -71,25 +71,36 @@ class ManageScreen(AdminBase):
 
     def update_screen(self):
         try:
-            screen_id = input("Enter Screen ID to update: ")
+            screen_id = input("Enter Screen ID to update: ").upper()
             no_row_gold = int(input("Enter new Number of Rows for Gold Class: "))
             no_col_gold = int(input("Enter new Number of Columns for Gold Class: "))
             no_row_silver = int(input("Enter new Number of Rows for Silver Class: "))
             no_col_silver = int(input("Enter new Number of Columns for Silver Class: "))
-            Availability_Gold = '1'*(no_col_gold*no_row_gold)
-            Availability_Silver  = '1'*(no_col_silver*no_row_silver)        
+            
+            # Creating the availability strings
+            Availability_Gold = '1' * (no_col_gold * no_row_gold)
+            Availability_Silver = '1' * (no_col_silver * no_row_silver)
+
             query = """
                 UPDATE screen
                 SET No_Row_Gold = %s, No_Col_Gold = %s, 
-                    No_Row_Silver = %s, No_Col_Silver = %s , Availability_Gold = %s , Availability_Silver = %s
-                WHERE Screen_ID = %s AND Screen_ID = %s ;
+                    No_Row_Silver = %s, No_Col_Silver = %s, Availability_Gold = %s, Availability_Silver = %s
+                WHERE Screen_ID = %s;
             """
-            values = (no_row_gold, no_col_gold, no_row_silver, no_col_silver, screen_id,Availability_Gold,Availability_Silver, self.theatre_id)
+            values = (no_row_gold, no_col_gold, no_row_silver, no_col_silver, Availability_Gold, Availability_Silver, screen_id)
+            
             self.cursor.execute(query, values)
             self.connection.commit()
-            print("\n✅ Screen updated successfully.")
+
+            # Check if any row was affected
+            if self.cursor.rowcount > 0:
+                print("\n✅ Screen updated successfully.")
+            else:
+                print('⚠️ No changes made. Screen ID not found or already updated.')
+
         except sql.Error as e:
             print("❌ Error updating screen:", e)
+
 
     def view_all_screens(self):
         try:

@@ -136,8 +136,6 @@ class Admin(AdminBase):
         except Exception as e:
             print('❌ Error Message:', e)
 
-
-
     def theatre_operations(self, theatre_id):
         """Operations that admin can perform for a selected theatre."""
         print(f"\n🎭 Managing Theatre: {theatre_id}")
