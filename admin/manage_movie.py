@@ -33,7 +33,7 @@ class ManageMovie(AdminBase):
     def add_movie(self):
         try:
             print("\n📝 Add New Movie")
-            movie_id = input("Enter Movie ID: ")
+
             name = input("Enter Movie Name: ")
             language = input("Enter Language: ")
             genre = input("Enter Genre: ")
@@ -51,22 +51,37 @@ class ManageMovie(AdminBase):
             for key, value in target_audience_dict.items():
                 print(f"{key}: {value}")
 
-            target_audience = input("\nEnter Target Audience (U, U/A, A, PG, R, NC-17): ")
+            target_audience = input("\nEnter Target Audience (U, U/A, A, PG, R, NC-17): ").upper()
 
             if target_audience not in target_audience_dict:
                 print("⚠️ Invalid Target Audience.")
                 return
 
             query = """
+                SELECT Movie_ID FROM movie ORDER BY Movie_ID DESC LIMIT 1;
+            """
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+
+            if result:
+                last_movie_id = result[0]
+                new_number = str(int(last_movie_id) + 1).zfill(3)
+            else:
+                new_number = "001"
+
+            new_movie_id = new_number
+
+            query = """
                 INSERT INTO movie (Movie_ID, Name, Language, Genre, Target_Audience)
                 VALUES (%s, %s, %s, %s, %s);
             """
-            self.cursor.execute(query, (movie_id, name, language, genre, target_audience))
+            self.cursor.execute(query, (new_movie_id, name, language, genre, target_audience))
             self.connection.commit()
-            print("\n✅ Movie added successfully.")
+            print("\n✅ Movie added successfully with Movie ID:", new_movie_id)
 
         except sql.Error as e:
             print("❌ Error adding movie:", e)
+
 
     def remove_movie(self):
         try:
@@ -102,7 +117,7 @@ class ManageMovie(AdminBase):
             for key, value in target_audience_dict.items():
                 print(f"{key}: {value}")
 
-            new_target_audience = input("\nEnter New Target Audience (U, U/A, A, PG, R, NC-17): ")
+            new_target_audience = input("\nEnter New Target Audience (U, U/A, A, PG, R, NC-17): ").upper()
 
             if new_target_audience and new_target_audience not in target_audience_dict:
                 print("⚠️ Invalid Target Audience.")

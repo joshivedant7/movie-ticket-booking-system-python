@@ -24,7 +24,7 @@ class ManageShow(AdminBase):
 
     def get_movie_ids(self):
         try:
-            query = "SELECT Movie_ID FROM screen WHERE 1;"
+            query = "SELECT DISTINCT Movie_ID FROM show_table;"
             self.cursor.execute(query)
             screen_ids = [screen[0] for screen in self.cursor.fetchall()]
             if not screen_ids:
@@ -68,7 +68,7 @@ class ManageShow(AdminBase):
             placeholders = ', '.join(['%s'] * len(self.screen_ids))
             query = f"""
                 SELECT Show_ID, Show_Time, Show_Date, Seats_Remaining_Gold, Seats_Remaining_Silver,
-                    Class_Cost_Gold, Class_Cost_Silver, Movie_ID
+                    Class_Cost_Gold, Class_Cost_Silver,Screen_ID, Movie_ID
                 FROM show_table
                 WHERE Screen_ID IN ({placeholders})
                 ORDER BY Show_Date, Show_Time ;
@@ -82,14 +82,13 @@ class ManageShow(AdminBase):
                 return
 
             print("\n🎬 Shows List for Theatre ID:", self.theatre_id)
-            print("-" * 80)
-            print(f"{'Show ID':<12}{'Time':<10}{'Date':<12}{'Gold Seats':<12}{'Silver Seats':<12}{'Gold Cost':<10}{'Silver Cost':<12}{'Movie ID':<10}")
-            print("-" * 80)
-
+            print("-" * 120)
+            print(f"{'Show ID':<12} {'Time':<10} {'Date':<12} {'GoldSeats':>12} {'SilverSeats':>12} {'GoldCost':>10} {'SilverCost':>12} {'Screen_Id':>10} {'Movie ID':>10}")
+            print("-" * 120)
             for show in shows:
-                print(f"{show[0]:<12}{show[1]}{show[2]}{show[3]:<12}{show[4]:<12}{show[5]:<10}{show[6]:<12}{show[7]}")
+                print(f"{show[0]:<12} {show[1]} {show[2]} {show[3]:>12} {show[4]:>12} {show[5]:>10} {show[6]:>12} {show[7]:>12} {show[8]}")
+            print("-" * 120)
 
-            print("-" * 80)
         except sql.Error as e:
             print("❌ Error fetching shows:", e)
 
@@ -97,7 +96,6 @@ class ManageShow(AdminBase):
         try:
             print("\n📝 Add New Show")
 
-            show_id = input("Enter Show ID: ")
             show_time = input("Enter Show Time (HH:MM:SS): ")
             show_date = input("Enter Show Date (YYYY-MM-DD): ")
             seats_gold = int(input("Enter Gold Seats Remaining: "))
@@ -110,12 +108,12 @@ class ManageShow(AdminBase):
                 return
 
             print("\nAvailable Screen IDs:", self.screen_ids)
-            screen_id = input("Enter Screen ID from the above list: ")
+            screen_id = input("Enter Screen ID from the above list: ").upper()
 
             if screen_id not in self.screen_ids:
                 print("⚠️ Invalid Screen ID.")
                 return
-            
+
             if not self.movie_ids:
                 print("🚫 No Movies available for this theatre.")
                 return
@@ -124,19 +122,34 @@ class ManageShow(AdminBase):
             movie_id = input("Enter Movie ID: ")
 
             if movie_id not in self.movie_ids:
-                print("⚠️ Invalid Screen ID.")
+                print("⚠️ Invalid Movie ID.")
                 return
+
+            query = """
+                SELECT Show_ID FROM show_table WHERE Screen_ID = %s ORDER BY Show_ID DESC LIMIT 1;
+            """
+            self.cursor.execute(query, (screen_id,))
+            result = self.cursor.fetchone()
+
+            if result:
+                last_show_id = result[0]
+                number_part = int(last_show_id[6:])
+                new_number = str(number_part + 1).zfill(4)
+            else:
+                new_number = "0001"
+
+            new_show_id = f"SH{screen_id}{new_number}"
 
             query = """
                 INSERT INTO show_table (Show_ID, Show_Time, Show_Date, Seats_Remaining_Gold, Seats_Remaining_Silver,
                                         Class_Cost_Gold, Class_Cost_Silver, Screen_ID, Movie_ID)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) ;
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
-            self.cursor.execute(query, (show_id, show_time, show_date, seats_gold, seats_silver,
+            self.cursor.execute(query, (new_show_id, show_time, show_date, seats_gold, seats_silver,
                                         cost_gold, cost_silver, screen_id, movie_id))
             self.connection.commit()
-            print("\n✅ Show added successfully.")
-            
+            print("\n✅ Show added successfully with Show ID:", new_show_id)
+
         except sql.Error as e:
             print("❌ Error adding show:", e)
 
@@ -157,13 +170,18 @@ class ManageShow(AdminBase):
                 return
             
             print("\nAvailable Screen IDs:", self.screen_ids)
-            new_screen_id = input("Enter New Screen ID: ")
+            new_screen_id = input("Enter New Screen ID: ").upper()
 
             if new_screen_id not in self.screen_ids:
                 print("⚠️ Invalid Screen ID.")
                 return
 
+            print("\nAvailable Movie IDs:", self.movie_ids)
             new_movie_id = input("Enter New Movie ID: ")
+
+            if new_movie_id not in self.movie_ids:
+                print("⚠️ Invalid Movie ID.")
+                return
 
             update_query = "UPDATE show_table SET "
             update_values = []
@@ -214,7 +232,7 @@ class ManageShow(AdminBase):
     def remove_show(self):
         try:
             show_id = input("\nEnter Show ID to remove: ")
-            query = "DELETE FROM show WHERE Show_ID = %s ;"
+            query = "DELETE FROM show_table WHERE Show_ID = %s ;"
             self.cursor.execute(query, (show_id,))
             self.connection.commit()
             print("\n✅ Show removed successfully.")

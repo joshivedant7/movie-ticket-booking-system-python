@@ -17,17 +17,6 @@ class AdminBase:
             print("❌ Failed to connect to database:", e)
             return False
 
-    def view_theatres(self):
-        try:
-            query = "SELECT * FROM theatre;"
-            self.cursor.execute(query)
-            theatres = self.cursor.fetchall()
-            
-            print("\n🎭 Available Theatres:")
-            for theatre in theatres:
-                print(f"ID: {theatre[0]}, Name: {theatre[1]}, Screens: {theatre[2]}, Area: {theatre[3]}")
-        except sql.Error as e:
-            print("❌ Error fetching theatres:", e)
 
     def select_theatre(self):
         theatre_id = input("\n🔹 Enter Theatre ID to manage: ").upper()

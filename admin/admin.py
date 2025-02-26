@@ -17,7 +17,8 @@ class Admin(AdminBase):
             print("\t\t\t1.View All Theatres")
             print("\t\t\t2.Select a Theatre")
             print("\t\t\t3.Add a Theatre")
-            print("\t\t\t4.Exit")
+            print("\t\t\t4.Remove a Theatre")
+            print("\t\t\t5.Exit")
             
             choice = input("👉 Enter your choice: ")
 
@@ -36,12 +37,27 @@ class Admin(AdminBase):
                 self.add_theatre()
 
             elif choice == "4":
+                self.Remove_theatre()
+
+            elif choice == "5":
                 print("\n👋 Exiting Admin Panel...")
                 self.close_connection()
                 break
             
             else:
                 print("⚠️ Invalid choice. Please try again.")
+
+    def view_theatres(self):
+        try:
+            query = "SELECT * FROM theatre WHERE No_of_Screens > 0;"
+            self.cursor.execute(query)
+            theatres = self.cursor.fetchall()
+            
+            print("\n🎭 Available Theatres:")
+            for theatre in theatres:
+                print(f"ID: {theatre[0]}, Name: {theatre[1]}, Screens: {theatre[2]}, Area: {theatre[3]}")
+        except sql.Error as e:
+            print("❌ Error fetching theatres:", e)
 
     def get_next_theatre_id(self,cursor):
         """Fetch the next theatre ID in the format 'T01', 'T02'..."""
@@ -65,9 +81,9 @@ class Admin(AdminBase):
             theatre_id = self.get_next_theatre_id(cursor)
             theatre_name = input("Enter Theatre Name: ")
             num_screens = int(input("Enter Number of Screens: "))
-
-            cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens) VALUES (%s, %s, %s);",
-                        (theatre_id, theatre_name, num_screens))
+            address = input("Enter address: ")
+            cursor.execute("INSERT INTO theatre (Theatre_ID, Name_of_Theatre, No_of_Screens,Area) VALUES (%s, %s, %s,%s);",
+                        (theatre_id, theatre_name, num_screens,address))
 
             for i in range(1, num_screens + 1):
                 screen_id = f"{theatre_id}{i}"  # E.g., T011, T012, T021...
@@ -97,6 +113,31 @@ class Admin(AdminBase):
             cursor.close()
             connection.close()
     
+    def Remove_theatre(self):
+        try:
+            connection = mysql.connector.connect(
+                host="localhost",
+                user="admin",
+                password="admin",
+                database="dbfm1"
+            )
+            cursor = connection.cursor()
+
+            theatre_id = input('Enter Theatre_ID: ').upper()
+
+            cursor.execute(f"UPDATE theatre SET No_of_Screens = 0 WHERE Theatre_ID = '{theatre_id}'")
+            
+            if cursor.rowcount > 0:
+                connection.commit()
+                print('✅ Theatre removed.')
+            else:
+                print("⚠️ No changes made. Theatre ID not found or already has 0 screens.")
+
+        except Exception as e:
+            print('❌ Error Message:', e)
+
+
+
     def theatre_operations(self, theatre_id):
         """Operations that admin can perform for a selected theatre."""
         print(f"\n🎭 Managing Theatre: {theatre_id}")
