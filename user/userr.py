@@ -412,7 +412,6 @@ def updateseats(x,y,show_id):
     else:
         print("Failed to get cursor, check DB connection!")
 
-
 def updateSeatAvailability(strGold, strSilver, theatre_id, screen_id):
     tid = theatre_id
     query = """
@@ -435,7 +434,6 @@ def updateSeatAvailability(strGold, strSilver, theatre_id, screen_id):
             connection.close()
     else:
         print("Failed to get cursor, check DB connection!")
-
 
 def generate_booking_id():
     try:
