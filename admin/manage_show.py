@@ -5,14 +5,27 @@ class ManageShow(AdminBase):
     def __init__(self, theatre_id):
         super().__init__()
         self.theatre_id = theatre_id
-        self.screen_ids = self.get_screen_ids()  
+        self.screen_ids = self.get_screen_ids()
+        self.movie_ids = self.get_movie_ids()
         self.show_menu()
 
     def get_screen_ids(self):
         """Fetch available screen IDs for the selected theatre."""
         try:
-            query = "SELECT Screen_ID FROM screen WHERE Theatre_ID = %s ;"
+            query = "SELECT Screen_ID FROM screen WHERE Theatre_ID = %s;"
             self.cursor.execute(query, (self.theatre_id,))
+            screen_ids = [screen[0] for screen in self.cursor.fetchall()]
+            if not screen_ids:
+                print("🚫 No screens found for this theatre.")
+            return screen_ids
+        except sql.Error as e:
+            print("❌ Error fetching screen IDs:", e)
+            return []
+
+    def get_movie_ids(self):
+        try:
+            query = "SELECT Movie_ID FROM screen WHERE 1;"
+            self.cursor.execute(query)
             screen_ids = [screen[0] for screen in self.cursor.fetchall()]
             if not screen_ids:
                 print("🚫 No screens found for this theatre.")
@@ -102,8 +115,17 @@ class ManageShow(AdminBase):
             if screen_id not in self.screen_ids:
                 print("⚠️ Invalid Screen ID.")
                 return
+            
+            if not self.movie_ids:
+                print("🚫 No Movies available for this theatre.")
+                return
 
+            print("\nAvailable Movie IDs:", self.movie_ids)
             movie_id = input("Enter Movie ID: ")
+
+            if movie_id not in self.movie_ids:
+                print("⚠️ Invalid Screen ID.")
+                return
 
             query = """
                 INSERT INTO show_table (Show_ID, Show_Time, Show_Date, Seats_Remaining_Gold, Seats_Remaining_Silver,
